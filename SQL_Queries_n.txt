@@ -1,0 +1,40 @@
+/* Query 1 - Which Customers Have The Highest Invoice Total? */
+SELECT c.FirstName AS First_Name,
+       c.LastName AS Last_Name,
+       i.total
+FROM Invoice i
+JOIN customer c ON c.customerid = i.customerid
+GROUP BY First_Name,
+         Last_Name
+ORDER BY i.total DESC
+LIMIT 10;
+
+/* Query 2 - Which Artists Made The Most Sales? */
+SELECT a.Name AS Artist,
+       SUM(il.UnitPrice) AS Revenue
+FROM Artist a
+JOIN Album al ON al.ArtistId = a.ArtistId
+JOIN Track t ON t.AlbumId = al.AlbumId
+JOIN InvoiceLine il ON il.TrackId = t.TrackId
+GROUP BY a.Name
+ORDER BY Revenue DESC
+LIMIT 5;
+
+/* Query 3 - What Was Each Sales Representative’s Contribution To Total Sales? */
+SELECT e.FirstName||' '||e.LastName AS 'Sales Rep',
+       SUM(inv.Total) AS 'Total'
+FROM Invoice inv
+JOIN Customer c ON c.CustomerId = inv.CustomerId
+JOIN Employee e ON c.SupportRepId = e.EmployeeId
+GROUP BY e.EmployeeId;
+
+/* Query 4 - What Is The Most Common Media Type Of Tracks? */
+SELECT Media_Type,
+       Number_Of_Tracks
+FROM
+  (SELECT m.Name AS Media_Type,
+          SUM(t.UnitPrice) AS Number_Of_Tracks
+   FROM MediaType m
+   JOIN Track t ON t.MediaTypeId = m.MediaTypeId
+   GROUP BY m.Name)
+ORDER BY Number_Of_Tracks DESC;
